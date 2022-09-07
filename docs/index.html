@@ -5,12 +5,83 @@
         <meta name="viewport" content="height=device-height,width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
         <meta name="referrer" content="no-referrer">
 
-        <title></title>
+        <title>Amazon URL Parser</title>
     </head>
 
-    <body></body>
+    <body>
+        <button type="button" id="convert">変換</button>
 
-    <script async type="module"></script>
+        <table>
+            <tr>
+                <td>URL</td>
+                <td><input readonly type="text" id="result-url"></td>
+            </tr>
 
-    <style></style>
+            <tr>
+                <td>商品コード(ASIN)</td>
+                <td><input readonly type="text" id="result-asin"></td>
+            </tr>
+
+            <tr>
+                <td>商品名</td>
+                <td><input readonly type="text" id="result-name"></td>
+            </tr>
+        </table>
+    </body>
+
+    <script async type="module">
+        document.getElementById("convert").addEventListener("click", async()=>{
+            const text = await navigator.clipboard.readText();
+
+            try{
+                new URL(text);
+            }
+            catch(e){
+                alert("現在のクリップボードデータはURLではありません");
+                return;
+            }
+
+            const {hostname, pathname} = new URL(text);
+
+            if(!/^www\.amazon\./i.test(hostname)){
+                alert("AmazonのURLではありません");
+                return;
+            }
+
+            const [, _asin] = pathname.match(/\/dp\/([0-9a-zA-Z]+)/) ?? [];
+            const [, _name] = pathname.match(/\/([^/]+)\/dp\/[0-9a-zA-Z]+/) ?? [];
+
+            if(!_asin){
+                alert("有効な商品URLではありません");
+                return;
+            }
+
+            const asin = _asin.toUpperCase();
+            const name = _name ? decodeURIComponent(_name) : "";
+            const domain = hostname.toLowerCase();
+
+            const url = `https://${domain}/dp/${asin}`;
+
+            document.getElementById("result-url").value = url;
+            document.getElementById("result-asin").value = asin;
+            document.getElementById("result-name").value = name || "(取得失敗)";
+
+            await navigator.clipboard.writeText(url);
+        });
+    </script>
+
+    <style>
+        #convert{
+            width: 100px;
+        }
+        #result-url{
+            width: 300px;
+        }
+        #result-asin{
+            width: 100px;
+        }
+        #result-name{
+            width: 400px;
+        }
+    </style>
 </html>
