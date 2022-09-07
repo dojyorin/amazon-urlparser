@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <script src="https://cdn.jsdelivr.net/npm/jszip@latest/dist/jszip.min.js"></script>
+    </head>
+
+    <body>
+        <input multiple type="file" id="files">
+    </body>
+
+    <script async type="module">
+        async function zipEncode(files){
+            const zip = new JSZip();
+
+            for(const file of files){
+                zip.file(file.name, file, {
+                    binary: true
+                });
+            }
+
+            return zip.generateAsync({
+                compression: "deflate",
+                type: "arraybuffer"
+            });
+        }
+
+        async function zipDecode(archive){
+            const zip = new JSZip();
+
+            return Promise.all(Object.values((await zip.loadAsync(archive)).files).filter(({dir}) => !dir).map(async f => new File([await f.async("blob")], f.name)));
+        }
+
+        document.getElementById("files").addEventListener("change", async({target: {files}})=>{
+            const encode = await zipEncode([...files]);
+            const decode = await zipDecode(encode);
+
+            console.log(encode);
+            console.log(decode);
+        });
+    </script>
+</html>

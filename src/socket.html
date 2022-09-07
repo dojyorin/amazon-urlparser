@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+
+    <body></body>
+
+    <script async type="module">
+        const socket = new WebSocket(`ws://${location.host}/socket`);
+
+        socket.addEventListener("error", ()=>{
+            socket.close();
+            console.log("ERROR");
+        }, {
+            once: true
+        });
+
+        socket.addEventListener("close", ()=>{
+            console.log("CLOSE");
+        }, {
+            once: true
+        });
+
+        socket.addEventListener("open", ()=>{
+            socket.send("test");
+            console.log("OPEN");
+        }, {
+            once: true
+        });
+
+        socket.addEventListener("message", ({data})=>{
+            console.log(data);
+        });
+    </script>
+</html>
