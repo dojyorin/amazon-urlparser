@@ -9,24 +9,48 @@
     </head>
 
     <body>
-        <button type="button" id="convert">変換</button>
+        <header>
+            <h1>Amazon URL Parser</h1>
+        </header>
 
-        <table>
-            <tr>
-                <td>URL</td>
-                <td><input readonly type="text" id="result-url"></td>
-            </tr>
+        <main>
+            <section>
+                <button type="button" id="convert">変換</button>
+            </section>
 
-            <tr>
-                <td>商品コード(ASIN)</td>
-                <td><input readonly type="text" id="result-asin"></td>
-            </tr>
+            <section>
+                <ul>
+                    <li>
+                        <input readonly type="text" id="result-url">
+                    </li>
 
-            <tr>
-                <td>商品名</td>
-                <td><input readonly type="text" id="result-name"></td>
-            </tr>
-        </table>
+                    <li>
+                        <input readonly type="text" id="result-asin">
+                    </li>
+
+                    <li>
+                        <input readonly type="text" id="result-name">
+                    </li>
+                </ul>
+            </section>
+
+            <!-- <table>
+                <tr>
+                    <td>URL</td>
+                    <td><input readonly type="text" id="result-url"></td>
+                </tr>
+
+                <tr>
+                    <td>商品コード(ASIN)</td>
+                    <td><input readonly type="text" id="result-asin"></td>
+                </tr>
+
+                <tr>
+                    <td>商品名</td>
+                    <td><input readonly type="text" id="result-name"></td>
+                </tr>
+            </table> -->
+        </main>
     </body>
 
     <script async type="module">
@@ -71,17 +95,39 @@
     </script>
 
     <style>
+        ::-webkit-scrollbar{
+            display: none !important;
+        }
+        body{
+            user-select: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        header, main{
+            text-align: center;
+        }
+        main{
+            padding: 0 10px;
+        }
+        section{
+            margin: 0 0 20px 0;
+        }
+        input{
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 400px;
+        }
+        ul{
+            display: inline;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        ul > li{
+            margin: 0 0 10px 0;
+        }
         #convert{
             width: 100px;
-        }
-        #result-url{
-            width: 300px;
-        }
-        #result-asin{
-            width: 100px;
-        }
-        #result-name{
-            width: 400px;
         }
     </style>
 </html>
