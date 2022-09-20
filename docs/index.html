@@ -15,31 +15,70 @@
 
         <main>
             <section>
-                <button type="button" id="convert">変換</button>
+                <dl>
+                    <dt>使い方</dt>
+                    <dd>Amazonの商品ページURLをコピーして「解析する」ボタンを押すだけ。</dd>
+                    <dd>クリップボードデータは自動的に解析後URLへ書き換わるので、そのまま目的の場所へペーストできます。</dd>
+                    <dd>(注意: クリップボードへのアクセス要求を許可してください)</dd>
+                </dl>
             </section>
 
             <section>
-                <ul>
-                    <li>
-                        <div>URL</div>
+                <button type="button" id="convert">解析する</button>
+            </section>
+
+            <section>
+                <dl>
+                    <dt>URL</dt>
+                    <dd>
                         <input readonly type="text" id="result-url">
-                    </li>
+                    </dd>
 
-                    <li>
-                        <div>商品コード(ASIN)</div>
+                    <dt>商品コード(ASIN)</dt>
+                    <dd>
                         <input readonly type="text" id="result-asin">
-                    </li>
+                    </dd>
 
-                    <li>
-                        <div>商品名</div>
+                    <dt>商品名</dt>
+                    <dd>
                         <input readonly type="text" id="result-name">
-                    </li>
-                </ul>
+                    </dd>
+                </dl>
+            </section>
+
+            <section>
+                <dl>
+                    <dt>このアプリについて</dt>
+                    <dd>データ処理はローカルで完結するため、インターネット通信を伴う処理はありません。</dd>
+                    <dd>サードパーティ製のライブラリは使用していません。</dd>
+                    <dd>MITライセンス準拠のオープンソースソフトウェアとなります。</dd>
+                    <dd>リポジトリ: <a target="_blank" rel="noopener" href="https://github.com/dojyorin/amazon-urlparser">GitHub</a></dd>
+                    <dd>お問い合わせ: <a target="_blank" rel="noopener" href="https://twitter.com/dojyorin">Twitter</a></dd>
+                </dl>
             </section>
         </main>
     </body>
 
     <script async type="module">
+        function dialogNotify(message){
+            const dialog = document.createElement("dialog");
+            dialog.style.position = "fixed";
+            dialog.style.top = "10px";
+            dialog.style.transition = "all 0.1s";
+            dialog.style.border = "0";
+            dialog.style.borderRadius = "8px";
+            dialog.style.padding = "10px 15px";
+            dialog.style.color = "#FFFFFF";
+            dialog.style.backgroundColor = "#FF4455";
+            dialog.style.boxShadow = "2px 3px 4px 0 #0000004D";
+            dialog.textContent = `\u{1F514} ${message}`;
+
+            dialog.show();
+
+            setTimeout(() => dialog.remove(), 5000);
+            document.body.appendChild(dialog);
+        }
+
         document.getElementById("convert").addEventListener("click", async()=>{
             const text = await navigator.clipboard.readText();
 
@@ -47,14 +86,14 @@
                 new URL(text);
             }
             catch(e){
-                alert("現在のクリップボードデータはURLではありません");
+                dialogNotify("現在のクリップボードデータはURLではありません");
                 return;
             }
 
             const {hostname, pathname} = new URL(text);
 
             if(!/^www\.amazon\./i.test(hostname)){
-                alert("AmazonのURLではありません");
+                dialogNotify("AmazonのURLではありません");
                 return;
             }
 
@@ -62,7 +101,7 @@
             const [, _name] = pathname.match(/\/([^/]+)\/dp\/[0-9a-zA-Z]+/) ?? [];
 
             if(!_asin){
-                alert("有効な商品URLではありません");
+                dialogNotify("有効な商品URLではありません");
                 return;
             }
 
@@ -93,7 +132,7 @@
             outline: none;
         }
         header, main{
-            position: absolute;
+            position: fixed;
             width: 100vw;
             color: #FFFFFF;
             box-sizing: border-box;
@@ -101,7 +140,7 @@
         header{
             top: 0px;
             height: 52px;
-            background-color: #8822FF;
+            background-color: #8311FF;
             padding: 0 12px;
             overflow: hidden;
             display: flex;
@@ -125,20 +164,25 @@
         input{
             box-sizing: border-box;
             font-size: 16px;
+            margin: 4px 0;
             padding: 4px;
             border: none;
+            border-radius: 2px;
         }
-        ul{
-            list-style: none;
+        dl{
             margin: 0;
-            padding: 0;
         }
-        ul > li{
-            margin: 0 0 10px 0;
+        dt{
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 0 4px 0;
+        }
+        dd{
+            margin: 0 0 12px 0;
         }
         #result-url, #result-asin, #result-name{
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
         }
         #convert{
             font-size: 24px;
